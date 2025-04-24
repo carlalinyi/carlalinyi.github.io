@@ -1,94 +1,120 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Teorías Conspirativas sobre los Aranceles</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-      color: #333;
-    }
-
-    header {
-      background-color: #2c3e50;
-      color: white;
-      padding: 20px 40px;
-      text-align: center;
-    }
-
-    .container {
-      padding: 20px 40px;
-      max-width: 800px;
-      margin: auto;
-    }
-
-    h1, h2 {
-      color: #2c3e50;
-    }
-
-    img {
-      max-width: 100%;
-      border-radius: 8px;
-      margin: 20px 0;
-    }
-
-    .teoria {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      color: #777;
-    }
-
-    a {
-      color: #2980b9;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Móvil</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #111;
+        }
+        #tetris-board {
+            background-color: #000;
+            border: 2px solid #fff;
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(20, 30px);
+            gap: 1px;
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: #222;
+        }
+        .active {
+            background-color: #ff4b5c;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            color: white;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <h1>Teorías Conspirativas sobre los Aranceles</h1>
-  <p>¿Realmente los aranceles son solo una medida económica?</p>
-</header>
+    <div id="score">Puntaje: 0</div>
+    <div id="tetris-board"></div>
 
-<div class="container">
-  <div class="teoria">
-    <h2>📦 La teoría del "Control Global"</h2>
-    <p>Algunos creen que los aranceles no solo son usados para proteger la economía local, sino también como una herramienta para manipular relaciones geopolíticas. Se dice que ciertos acuerdos están diseñados para favorecer a conglomerados internacionales.</p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/World_trade_map.png/800px-World_trade_map.png" alt="Mapa de comercio global">
-    <p><strong>Noticia relacionada:</strong> <a href="#">[Enlace a artículo]</a></p>
-  </div>
+    <script>
+        const COLS = 10;
+        const ROWS = 20;
+        const board = document.getElementById('tetris-board');
+        let score = 0;
 
-  <div class="teoria">
-    <h2>🛠️ El mito del "Arancel Patriótico"</h2>
-    <p>Se argumenta que algunos gobiernos usan los aranceles como una herramienta de propaganda, vendiéndolos como una defensa del trabajo nacional, mientras en realidad benefician a industrias específicas con fuertes vínculos políticos.</p>
-    <p><strong>Noticia relacionada:</strong> <a href="#">[Enlace a artículo]</a></p>
-  </div>
+        const tetrominos = [
+            [[1, 1, 1], [0, 1, 0]], // T-shape
+            [[1, 1], [1, 1]], // O-shape
+            [[1, 1, 0], [0, 1, 1]], // S-shape
+            [[0, 1, 1], [1, 1, 0]], // Z-shape
+            [[1, 1, 1, 1]], // I-shape
+            [[1, 1, 1], [1, 0, 0]], // L-shape
+            [[1, 1, 1], [0, 0, 1]] // J-shape
+        ];
 
-  <div class="teoria">
-    <h2>🌐 El rol de las grandes corporaciones</h2>
-    <p>Otra teoría sugiere que las grandes multinacionales influyen directamente en la imposición o eliminación de aranceles, usando sus lobbies para crear marcos legales favorables que aparentan ser decisiones soberanas.</p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flags_world_economy.jpg/800px-Flags_world_economy.jpg" alt="Corporaciones globales">
-    <p><strong>Noticia relacionada:</strong> <a href="#">[Enlace a artículo]</a></p>
-  </div>
-</div>
+        function createBoard() {
+            for (let i = 0; i < ROWS * COLS; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                board.appendChild(cell);
+            }
+        }
 
-<footer>
-  © 2025 Teorías del Comercio Global. Sitio creado con fines educativos.
-</footer>
+        function drawBoard() {
+            const cells = document.querySelectorAll('#tetris-board .cell');
+            cells.forEach(cell => cell.classList.remove('active'));
+        }
+
+        function drawTetromino(tetromino, x, y) {
+            tetromino.forEach((row, rIdx) => {
+                row.forEach((cell, cIdx) => {
+                    if (cell) {
+                        const index = (y + rIdx) * COLS + (x + cIdx);
+                        cells[index].classList.add('active');
+                    }
+                });
+            });
+        }
+
+        let currentTetromino = tetrominos[Math.floor(Math.random() * tetrominos.length)];
+        let currentX = 3;
+        let currentY = 0;
+
+        function moveTetromino() {
+            drawBoard();
+            drawTetromino(currentTetromino, currentX, currentY);
+            if (currentY + currentTetromino.length === ROWS) {
+                currentY = 0;
+                currentTetromino = tetrominos[Math.floor(Math.random() * tetrominos.length)];
+            } else {
+                currentY++;
+            }
+        }
+
+        createBoard();
+        setInterval(moveTetromino, 500);
+
+        function control(e) {
+            if (e.keyCode === 37) { // Left arrow
+                currentX--;
+            } else if (e.keyCode === 39) { // Right arrow
+                currentX++;
+            } else if (e.keyCode === 40) { // Down arrow
+                currentY++;
+            }
+            moveTetromino();
+        }
+
+        document.addEventListener('keydown', control);
+    </script>
 
 </body>
 </html>
