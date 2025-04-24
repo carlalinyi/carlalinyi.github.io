@@ -4,116 +4,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tetris Móvil</title>
+    <title>Juego de Memoria</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #111;
+            margin: 0;
+            background-color: #f4f4f9;
         }
-        #tetris-board {
-            background-color: #000;
-            border: 2px solid #fff;
+        #game-board {
             display: grid;
-            grid-template-columns: repeat(10, 30px);
-            grid-template-rows: repeat(20, 30px);
-            gap: 1px;
+            grid-template-columns: repeat(4, 100px);
+            grid-template-rows: repeat(4, 100px);
+            gap: 10px;
         }
-        .cell {
-            width: 30px;
-            height: 30px;
-            background-color: #222;
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
-        .active {
-            background-color: #ff4b5c;
+        .card.flipped {
+            background-color: #2ecc71;
+            transform: rotateY(180deg);
         }
         #score {
             position: absolute;
             top: 20px;
-            color: white;
+            left: 20px;
             font-size: 24px;
+            color: #333;
+        }
+        .card.matched {
+            background-color: #e74c3c;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
     <div id="score">Puntaje: 0</div>
-    <div id="tetris-board"></div>
+    <div id="game-board"></div>
 
     <script>
-        const COLS = 10;
-        const ROWS = 20;
-        const board = document.getElementById('tetris-board');
-        let score = 0;
-
-        const tetrominos = [
-            [[1, 1, 1], [0, 1, 0]], // T-shape
-            [[1, 1], [1, 1]], // O-shape
-            [[1, 1, 0], [0, 1, 1]], // S-shape
-            [[0, 1, 1], [1, 1, 0]], // Z-shape
-            [[1, 1, 1, 1]], // I-shape
-            [[1, 1, 1], [1, 0, 0]], // L-shape
-            [[1, 1, 1], [0, 0, 1]] // J-shape
+        const board = document.getElementById('game-board');
+        const scoreDisplay = document.getElementById('score');
+        const cards = [
+            'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 
+            'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'
         ];
 
-        function createBoard() {
-            for (let i = 0; i < ROWS * COLS; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell');
-                board.appendChild(cell);
+        let flippedCards = [];
+        let matchedCards = [];
+        let score = 0;
+
+        // Mezclar las cartas
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
         }
 
-        function drawBoard() {
-            const cells = document.querySelectorAll('#tetris-board .cell');
-            cells.forEach(cell => cell.classList.remove('active'));
-        }
-
-        function drawTetromino(tetromino, x, y) {
-            tetromino.forEach((row, rIdx) => {
-                row.forEach((cell, cIdx) => {
-                    if (cell) {
-                        const index = (y + rIdx) * COLS + (x + cIdx);
-                        cells[index].classList.add('active');
-                    }
-                });
+        // Crear las cartas en el tablero
+        function createBoard() {
+            shuffle(cards);
+            cards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.dataset.value = card;
+                cardElement.addEventListener('click', flipCard);
+                board.appendChild(cardElement);
             });
         }
 
-        let currentTetromino = tetrominos[Math.floor(Math.random() * tetrominos.length)];
-        let currentX = 3;
-        let currentY = 0;
+        // Voltear la carta
+        function flipCard() {
+            if (flippedCards.length === 2 || this.classList.contains('flipped') || this.classList.contains('matched')) {
+                return;
+            }
 
-        function moveTetromino() {
-            drawBoard();
-            drawTetromino(currentTetromino, currentX, currentY);
-            if (currentY + currentTetromino.length === ROWS) {
-                currentY = 0;
-                currentTetromino = tetrominos[Math.floor(Math.random() * tetrominos.length)];
+            this.classList.add('flipped');
+            this.textContent = this.dataset.value;
+            flippedCards.push(this);
+
+            if (flippedCards.length === 2) {
+                checkForMatch();
+            }
+        }
+
+        // Verificar si las cartas coinciden
+        function checkForMatch() {
+            const [firstCard, secondCard] = flippedCards;
+
+            if (firstCard.dataset.value === secondCard.dataset.value) {
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                score += 10;
             } else {
-                currentY++;
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    firstCard.textContent = '';
+                    secondCard.textContent = '';
+                }, 1000);
+                score -= 5;
+            }
+
+            flippedCards = [];
+            updateScore();
+            checkGameOver();
+        }
+
+        // Actualizar el puntaje
+        function updateScore() {
+            scoreDisplay.textContent = `Puntaje: ${score}`;
+        }
+
+        // Verificar si el juego ha terminado
+        function checkGameOver() {
+            if (document.querySelectorAll('.matched').length === cards.length) {
+                setTimeout(() => {
+                    alert(`¡Juego terminado! Puntaje final: ${score}`);
+                }, 500);
             }
         }
 
         createBoard();
-        setInterval(moveTetromino, 500);
-
-        function control(e) {
-            if (e.keyCode === 37) { // Left arrow
-                currentX--;
-            } else if (e.keyCode === 39) { // Right arrow
-                currentX++;
-            } else if (e.keyCode === 40) { // Down arrow
-                currentY++;
-            }
-            moveTetromino();
-        }
-
-        document.addEventListener('keydown', control);
     </script>
 
 </body>
