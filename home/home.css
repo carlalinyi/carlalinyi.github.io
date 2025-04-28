@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mitr&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    background: url('../cielo.png') no-repeat center bottom fixed;
+    background-size: cover;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nube-izquierda, .nube-derecha {
+    position: absolute;
+    top: 25%; /* Ajusta donde quieres que salgan */
+    width: 15vw;
+    height: auto;
+    z-index: 1; /* Para que estén detrás de todo el contenido */
+    opacity: 0.8;
+    pointer-events: none; /* Importante: para que no bloqueen clicks */
+}
+
+.nube-izquierda {
+    left: 0;
+}
+
+.nube-derecha {
+    right: 0;
+}
+
+/* HEADER */
+header {
+    width: 100%;
+    height: fit-content;
+    background-color: #a7d8f0;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.topbar-container {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-top: 1vh;
+}
+
+.topbar-logo img {
+    width: 7vw;
+    height: 6vw;
+    margin: 0 4vw;
+    padding: 0;
+}
+
+.topbar-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 4vw;
+}
+
+.topbar-search input {
+    width: 40vw;
+    font-family: 'PT Sans Narrow', sans-serif;
+    font-size: 32px;
+    text-align: center;
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+}
+
+.topbar-nav {
+    font-family: 'PT Sans Narrow', sans-serif;
+    font-weight: bold;
+    font-size: 32px;
+    margin-top: 10px;
+}
+
+.topbar-nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    gap: 30px;
+}
+
+.topbar-nav ul li {
+    margin: 1vh 1.5vw;
+}
+
+.topbar-nav ul li span {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* HOVER opcional para los spans */
+.topbar-nav ul li span:hover {
+    text-decoration: underline;
+}
+
+/* USER ICONS */
+.topbar-user-icons {
+    display: flex;
+    align-items: flex-start;
+    margin-right: 4vw;
+    gap: 1vw;
+    height: 100%;
+}
+
+.topbar-user-icons img {
+    height: 50px;
+    width: 50px;
+    padding: 8px;
+    background-color: white;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.menu-bebidas {
+    position: relative;
+}
+
+.menu-bebidas ul  {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #a7d8f0;
+    padding: 10px 0;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.submenu li {
+    list-style: none;
+    padding: 8px 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: normal;
+    font-size: 1rem;
+    display: block;
+    border-bottom: 1px solid black;
+}
+
+.submenu li a {
+    text-decoration: none;
+    color: black;
+}
+
+.submenu li:hover {
+    cursor: pointer;
+}
+
+.submenu li:last-child {
+    border-bottom: none; /* No poner línea en el último */
+}
+
+/* HERO */
+.hero {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('nubes.png') no-repeat center/cover;
+    text-align: center;
+    padding: 40px 20px;
+    position: relative;
+    font-family: 'PT Sans Narrow', sans-serif;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+}
+
+.carousel {
+    width: 50%;
+    height: 100%;
+    /*perspective: 1000px; /* 🎯 Importante: para ver el 3D */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-3d {
+    width: 12%;
+    overflow: hidden;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.carousel-3d img {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+    transition: transform 0.5s, filter 0.5s, opacity 0.5s;
+    width: 12%;
+    height: 70%;
+}
+
+
+.carousel button {
+    top: 50%;
+    background: #D9D9D9;
+    opacity: 0.7;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 5px 30px;
+    z-index: 10;
+}
+
+.carousel .prev {
+    left: 50%;
+    transform: translate(-6vw, -50%); /* 250px hacia la izquierda */
+}
+
+.carousel .next {
+    left: 50%;
+    transform: translate(6vw, -50%); /* 250px hacia la derecha */
+}
+
+.carousel button:hover {
+    background: #ddd;
+}
+
+
+/* ABOUT */
+.about {
+    background: white;
+    padding: 40px 20px;
+    margin-top: 5vh;
+    text-align: center;
+    width: fit-content;
+    height: fit-content;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    font-family: 'Mitr', sans-serif;
+}
+
+.about h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.about p {
+    max-width: 600px;
+    margin: 0 auto 20px;
+    line-height: 1.6;
+}
+
+/* FOOTER */
+footer {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.social-media img {
+    height: 30px;
+    margin: 10px;
+}
